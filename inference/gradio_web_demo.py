@@ -19,8 +19,6 @@ from openai import OpenAI
 import moviepy.editor as mp
 
 dtype = torch.bfloat16
-device = "cuda"  # Need to use cuda
-
 
 initialized = ""
 pipe = None
