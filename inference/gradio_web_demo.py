@@ -28,7 +28,7 @@ def init(name):
     global pipe
     if initialized != name:
         print(f"initializing pipeline: {name}")
-        pipe = CogVideoXPipeline.from_pretrained(name, torch_dtype=dtype).to(device)
+        pipe = CogVideoXPipeline.from_pretrained(name, torch_dtype=dtype)
         pipe.enable_model_cpu_offload()
         pipe.enable_sequential_cpu_offload()
         pipe.vae.enable_slicing()
