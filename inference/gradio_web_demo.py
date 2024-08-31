@@ -185,12 +185,12 @@ with gr.Blocks() as demo:
 #                    "50 steps are recommended for most cases.<br>"
 #                    "For the 5B model, 50 steps will take approximately 350 seconds."
 #                )
-                with gr.Row():
-                    model_choice = gr.Dropdown(["THUDM/CogVideoX-5b", "THUDM/CogVideoX-2b"], value="THUDM/CogVideoX-5b", label="Model")
-                with gr.Row():
-                    num_inference_steps = gr.Number(label="Inference Steps", value=50)
-                    guidance_scale = gr.Number(label="Guidance Scale", value=6.0)
-                generate_button = gr.Button("🎬 Generate Video")
+            with gr.Row():
+                model_choice = gr.Dropdown(["THUDM/CogVideoX-5b", "THUDM/CogVideoX-2b"], value="THUDM/CogVideoX-5b", label="Model")
+            with gr.Row():
+                num_inference_steps = gr.Number(label="Inference Steps", value=50)
+                guidance_scale = gr.Number(label="Guidance Scale", value=6.0)
+            generate_button = gr.Button("🎬 Generate Video")
 
         with gr.Column():
             video_output = gr.Video(label="CogVideoX Generate Video", width=720, height=480)
