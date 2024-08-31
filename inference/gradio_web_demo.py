@@ -153,40 +153,40 @@ def delete_old_files():
 threading.Thread(target=delete_old_files, daemon=True).start()
 
 with gr.Blocks() as demo:
-    gr.Markdown("""
-           <div style="text-align: center; font-size: 32px; font-weight: bold; margin-bottom: 20px;">
-               CogVideoX-2B Huggingface Space🤗
-           </div>
-           <div style="text-align: center;">
-               <a href="https://huggingface.co/THUDM/CogVideoX-2B">🤗 2B Model Hub</a> |
-               <a href="https://github.com/THUDM/CogVideo">🌐 Github</a> |
-               <a href="https://arxiv.org/pdf/2408.06072">📜 arxiv </a>
-           </div>
-
-           <div style="text-align: center; font-size: 15px; font-weight: bold; color: red; margin-bottom: 20px;">
-            ⚠️ This demo is for academic research and experiential use only. 
-            Users should strictly adhere to local laws and ethics.
-            </div>
-           """)
+#    gr.Markdown("""
+#           <div style="text-align: center; font-size: 32px; font-weight: bold; margin-bottom: 20px;">
+#               CogVideoX-2B Huggingface Space🤗
+#           </div>
+#           <div style="text-align: center;">
+#               <a href="https://huggingface.co/THUDM/CogVideoX-2B">🤗 2B Model Hub</a> |
+#               <a href="https://github.com/THUDM/CogVideo">🌐 Github</a> |
+#               <a href="https://arxiv.org/pdf/2408.06072">📜 arxiv </a>
+#           </div>
+#
+#           <div style="text-align: center; font-size: 15px; font-weight: bold; color: red; margin-bottom: 20px;">
+#            ⚠️ This demo is for academic research and experiential use only. 
+#            Users should strictly adhere to local laws and ethics.
+#            </div>
+#           """)
     with gr.Row():
         with gr.Column():
             prompt = gr.Textbox(label="Prompt (Less than 200 Words)", placeholder="Enter your prompt here", lines=5)
 
-            with gr.Row():
-                gr.Markdown(
-                    "✨Upon pressing the enhanced prompt button, we will use [GLM-4 Model](https://github.com/THUDM/GLM-4) to polish the prompt and overwrite the original one."
-                )
-                enhance_button = gr.Button("✨ Enhance Prompt(Optional)")
-
-            with gr.Column():
-                gr.Markdown(
-                    "**Optional Parameters** (default values are recommended)<br>"
-                    "Increasing the number of inference steps will produce more detailed videos, but it will slow down the process.<br>"
-                    "50 steps are recommended for most cases.<br>"
-                    "For the 5B model, 50 steps will take approximately 350 seconds."
-                )
+#            with gr.Row():
+#                gr.Markdown(
+#                    "✨Upon pressing the enhanced prompt button, we will use [GLM-4 Model](https://github.com/THUDM/GLM-4) to polish the prompt and overwrite the original one."
+#                )
+#                enhance_button = gr.Button("✨ Enhance Prompt(Optional)")
+#
+#            with gr.Column():
+#                gr.Markdown(
+#                    "**Optional Parameters** (default values are recommended)<br>"
+#                    "Increasing the number of inference steps will produce more detailed videos, but it will slow down the process.<br>"
+#                    "50 steps are recommended for most cases.<br>"
+#                    "For the 5B model, 50 steps will take approximately 350 seconds."
+#                )
                 with gr.Row():
-                    model_choice = gr.Dropdown(["THUDM/CogVideoX-5b", "THUDM/CogVideoX-2b"], value="THUDM/CogVideoX-5b")
+                    model_choice = gr.Dropdown(["THUDM/CogVideoX-5b", "THUDM/CogVideoX-2b"], value="THUDM/CogVideoX-5b", label="Model")
                 with gr.Row():
                     num_inference_steps = gr.Number(label="Inference Steps", value=50)
                     guidance_scale = gr.Number(label="Guidance Scale", value=6.0)
@@ -252,7 +252,7 @@ with gr.Blocks() as demo:
         outputs=[video_output, download_video_button, download_gif_button],
     )
 
-    enhance_button.click(enhance_prompt_func, inputs=[prompt], outputs=[prompt])
+#    enhance_button.click(enhance_prompt_func, inputs=[prompt], outputs=[prompt])
 
 if __name__ == "__main__":
     demo.launch()
