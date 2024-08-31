@@ -21,11 +21,22 @@ import moviepy.editor as mp
 dtype = torch.bfloat16
 device = "cuda"  # Need to use cuda
 
-pipe = CogVideoXPipeline.from_pretrained("THUDM/CogVideoX-5b", torch_dtype=dtype).to(device)
-pipe.enable_model_cpu_offload()
-pipe.enable_sequential_cpu_offload()
-pipe.vae.enable_slicing()
-pipe.vae.enable_tiling()
+
+initialized = ""
+pipe = None
+def init(name):
+    #pipe = CogVideoXPipeline.from_pretrained("THUDM/CogVideoX-5b", torch_dtype=dtype).to(device)
+    global initialized
+    global pipe
+    if initialized != name:
+        print(f"initializing pipeline: {name}")
+        pipe = CogVideoXPipeline.from_pretrained(name, torch_dtype=dtype).to(device)
+        pipe.enable_model_cpu_offload()
+        pipe.enable_sequential_cpu_offload()
+        pipe.vae.enable_slicing()
+        pipe.vae.enable_tiling()
+        initialized = name
+        print(f"initialized {initialized}")
 
 os.makedirs("./output", exist_ok=True)
 os.makedirs("./gradio_tmp", exist_ok=True)
@@ -94,8 +105,9 @@ def convert_prompt(prompt: str, retry_times: int = 3) -> str:
     return prompt
 
 
-def infer(prompt: str, num_inference_steps: int, guidance_scale: float, progress=gr.Progress(track_tqdm=True)):
+def infer(prompt: str, num_inference_steps: int, guidance_scale: float, name: str, progress=gr.Progress(track_tqdm=True)):
     torch.cuda.empty_cache()
+    init(name)
     video = pipe(
         prompt=prompt,
         num_videos_per_prompt=1,
@@ -176,6 +188,8 @@ with gr.Blocks() as demo:
                     "For the 5B model, 50 steps will take approximately 350 seconds."
                 )
                 with gr.Row():
+                    model_choice = gr.Dropdown(["THUDM/CogVideoX-5b", "THUDM/CogVideoX-2b"], value="THUDM/CogVideoX-5b")
+                with gr.Row():
                     num_inference_steps = gr.Number(label="Inference Steps", value=50)
                     guidance_scale = gr.Number(label="Guidance Scale", value=6.0)
                 generate_button = gr.Button("🎬 Generate Video")
@@ -223,7 +237,7 @@ with gr.Blocks() as demo:
     """)
 
     def generate(prompt, num_inference_steps, guidance_scale, model_choice, progress=gr.Progress(track_tqdm=True)):
-        tensor = infer(prompt, num_inference_steps, guidance_scale, progress=progress)
+        tensor = infer(prompt, num_inference_steps, guidance_scale, model_choice, progress=progress)
         video_path = save_video(tensor)
         video_update = gr.update(visible=True, value=video_path)
         gif_path = convert_to_gif(video_path)
@@ -236,7 +250,7 @@ with gr.Blocks() as demo:
 
     generate_button.click(
         generate,
-        inputs=[prompt, num_inference_steps, guidance_scale],
+        inputs=[prompt, num_inference_steps, guidance_scale, model_choice],
         outputs=[video_output, download_video_button, download_gif_button],
     )
 
