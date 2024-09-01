@@ -92,7 +92,7 @@ def convert_prompt(prompt: str, retry_times: int = 3) -> str:
                     "content": f'Create an imaginative video descriptive caption or modify an earlier caption in ENGLISH for the user input: "{text}"',
                 },
             ],
-            model="glm-4-0520",
+            model="gpt-4o",
             temperature=0.01,
             top_p=0.7,
             stream=False,
