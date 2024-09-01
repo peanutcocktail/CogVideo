@@ -174,7 +174,7 @@ with gr.Blocks() as demo:
 
             with gr.Row():
                 gr.Markdown(
-                    "✨ To enhance the prompt, either set the OPENAI_API_KEY variable from the Configure menu (if you have an OpenAI API key), or just use chatgpt to enhance the prompt manually (Recommended)",
+                    "✨ To enhance the prompt, either set the OPENAI_API_KEY variable from the Configure menu and click the Enhance Prompt button (if you have an OpenAI API key), or just use chatgpt to enhance the prompt manually (Recommended)",
                 )
                 enhance_button = gr.Button("✨ Enhance Prompt(Optional)")
 
