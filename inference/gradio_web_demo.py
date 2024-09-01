@@ -170,7 +170,7 @@ with gr.Blocks() as demo:
 #           """)
     with gr.Row():
         with gr.Column():
-            prompt = gr.Textbox(label="Prompt (Less than 200 Words)", placeholder="Enter your prompt here", lines=5)
+            prompt = gr.Textbox(label="Prompt (Less than 200 Words. The more detailed the better.)", placeholder="Enter your prompt here", lines=5)
 
 #            with gr.Row():
 #                gr.Markdown(
@@ -186,7 +186,7 @@ with gr.Blocks() as demo:
 #                    "For the 5B model, 50 steps will take approximately 350 seconds."
 #                )
             with gr.Row():
-                model_choice = gr.Dropdown(["THUDM/CogVideoX-5b", "THUDM/CogVideoX-2b"], value="THUDM/CogVideoX-5b", label="Model")
+                model_choice = gr.Dropdown(["THUDM/CogVideoX-2b", "THUDM/CogVideoX-5b"], value="THUDM/CogVideoX-2b", label="Model")
             with gr.Row():
                 num_inference_steps = gr.Number(label="Inference Steps", value=50)
                 guidance_scale = gr.Number(label="Guidance Scale", value=6.0)
