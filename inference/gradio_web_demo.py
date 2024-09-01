@@ -174,7 +174,7 @@ with gr.Blocks() as demo:
 
             with gr.Row():
                 gr.Markdown(
-                    "✨Upon pressing the enhanced prompt button, we will use [GLM-4 Model](https://github.com/THUDM/GLM-4) to polish the prompt and overwrite the original one."
+                    "✨ To enhance the prompt, either set the OPENAI_API_KEY variable from the Configure menu (if you have an OpenAI API key), or just use chatgpt to enhance the prompt manually (Recommended)",
                 )
                 enhance_button = gr.Button("✨ Enhance Prompt(Optional)")
 
@@ -184,13 +184,6 @@ with gr.Blocks() as demo:
                 num_inference_steps = gr.Number(label="Inference Steps", value=50)
                 guidance_scale = gr.Number(label="Guidance Scale", value=6.0)
             generate_button = gr.Button("🎬 Generate Video")
-            with gr.Row():
-                gr.Markdown(
-                    "**Optional Parameters** (default values are recommended)<br>"
-                    "Increasing the number of inference steps will produce more detailed videos, but it will slow down the process.<br>"
-                    "50 steps are recommended for most cases.<br>"
-                    "For the 5B model, 50 steps will take approximately 350 seconds."
-                )
 
         with gr.Column():
             video_output = gr.Video(label="CogVideoX Generate Video", width=720, height=480)
