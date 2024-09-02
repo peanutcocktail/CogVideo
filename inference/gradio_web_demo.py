@@ -18,16 +18,19 @@ from datetime import datetime, timedelta
 from openai import OpenAI
 import moviepy.editor as mp
 
-dtype = torch.bfloat16
-
 initialized = ""
 pipe = None
-def init(name):
+def init(name, dtype_str):
     #pipe = CogVideoXPipeline.from_pretrained("THUDM/CogVideoX-5b", torch_dtype=dtype).to(device)
     global initialized
     global pipe
     if initialized != name:
         print(f"initializing pipeline: {name}")
+        if dtype_str == "bfloat16":
+            dtype = torch.bfloat16
+        elif dtype_str == "float16":
+            dtype = torch.float16
+        print(f"init dtype {dtype}")
         pipe = CogVideoXPipeline.from_pretrained(name, torch_dtype=dtype)
         pipe.enable_model_cpu_offload()
         pipe.enable_sequential_cpu_offload()
@@ -103,9 +106,9 @@ def convert_prompt(prompt: str, retry_times: int = 3) -> str:
     return prompt
 
 
-def infer(prompt: str, num_inference_steps: int, guidance_scale: float, name: str, progress=gr.Progress(track_tqdm=True)):
+def infer(prompt: str, num_inference_steps: int, guidance_scale: float, name: str, dtype: str, progress=gr.Progress(track_tqdm=True)):
     torch.cuda.empty_cache()
-    init(name)
+    init(name, dtype)
     video = pipe(
         prompt=prompt,
         num_videos_per_prompt=1,
@@ -164,7 +167,7 @@ with gr.Blocks() as demo:
 #           </div>
 #
 #           <div style="text-align: center; font-size: 15px; font-weight: bold; color: red; margin-bottom: 20px;">
-#            ⚠️ This demo is for academic research and experiential use only. 
+#            ⚠️ This demo is for academic research and experiential use only.
 #            Users should strictly adhere to local laws and ethics.
 #            </div>
 #           """)
@@ -174,7 +177,7 @@ with gr.Blocks() as demo:
 
             with gr.Row():
                 gr.Markdown(
-                    "✨ To enhance the prompt, either set the OPENAI_API_KEY variable from the Configure menu and click the Enhance Prompt button (if you have an OpenAI API key), or just use chatgpt to enhance the prompt manually (Recommended)",
+                    "✨ To enhance the prompt, either set the OPENAI_API_KEY variable from the Configure menu (if you have an OpenAI API key), or just use chatgpt to enhance the prompt manually (Recommended)",
                 )
                 enhance_button = gr.Button("✨ Enhance Prompt(Optional)")
 
@@ -183,6 +186,8 @@ with gr.Blocks() as demo:
             with gr.Row():
                 num_inference_steps = gr.Number(label="Inference Steps", value=50)
                 guidance_scale = gr.Number(label="Guidance Scale", value=6.0)
+            with gr.Row():
+                dtype_choice = gr.Radio(["bfloat16", "float16"], label="dtype (older machines may not support bfloat16. try float16 if bfloat16 doesn't work)", value="bfloat16")
             generate_button = gr.Button("🎬 Generate Video")
 
         with gr.Column():
@@ -227,8 +232,8 @@ with gr.Blocks() as demo:
     </table>
     """)
 
-    def generate(prompt, num_inference_steps, guidance_scale, model_choice, progress=gr.Progress(track_tqdm=True)):
-        tensor = infer(prompt, num_inference_steps, guidance_scale, model_choice, progress=progress)
+    def generate(prompt, num_inference_steps, guidance_scale, model_choice, dtype, progress=gr.Progress(track_tqdm=True)):
+        tensor = infer(prompt, num_inference_steps, guidance_scale, model_choice, dtype, progress=progress)
         video_path = save_video(tensor)
         video_update = gr.update(visible=True, value=video_path)
         gif_path = convert_to_gif(video_path)
@@ -241,7 +246,7 @@ with gr.Blocks() as demo:
 
     generate_button.click(
         generate,
-        inputs=[prompt, num_inference_steps, guidance_scale, model_choice],
+        inputs=[prompt, num_inference_steps, guidance_scale, model_choice, dtype_choice],
         outputs=[video_output, download_video_button, download_gif_button],
     )
 
