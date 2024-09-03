@@ -183,7 +183,7 @@ def resize_video(input_path, target_size=(720, 480)):
         return resized_frame
 
     # Apply the processing function to each frame
-    resized_clip = clip.fl(process_frame)
+    resized_clip = clip.fl_image(process_frame)
 
     try:
         # Write the result to a file
