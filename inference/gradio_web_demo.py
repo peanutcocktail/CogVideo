@@ -177,10 +177,11 @@ def resize_video(input_path, target_size=(720, 480)):
         )
 
     # Write the result to a file
-    resized_clip.write_videofile(input_path, fps=8)
+    resized_clip.write_videofile(output_path, codec='libx264', audio_codec='aac')
 
     # Close the clips
     clip.close()
+    resized_clip.close()
 
 def save_video(tensor):
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
