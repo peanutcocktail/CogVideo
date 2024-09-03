@@ -183,6 +183,10 @@ def resize_video(input_path, target_size=(720, 480)):
     clip.close()
     resized_clip.close()
 
+    # Sleep for 2 seconds
+    time.sleep(2)
+
+
 def save_video(tensor):
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     video_path = f"./output/{timestamp}.mp4"
