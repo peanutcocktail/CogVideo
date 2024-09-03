@@ -166,7 +166,7 @@ def resize_video(input_path, target_size=(720, 480)):
     print(f"Resize factor: {scale_factor}")
 
     # Define a function to resize and pad a single frame
-    def process_frame(frame):
+    def process_frame(frame, t):
         # Resize the frame
         resized_frame = mp.vfx.resize(frame, scale_factor)
         
