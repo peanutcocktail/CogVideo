@@ -139,6 +139,7 @@ def infer2(prompt: str, videopath: str, strength: float, num_inference_steps: in
     global pipe
     torch.cuda.empty_cache()
     init2(name, dtype)
+    resize_video(videopath)
     input_video = load_video(videopath)
     video = pipe(
         video=input_video,
@@ -148,6 +149,35 @@ def infer2(prompt: str, videopath: str, strength: float, num_inference_steps: in
         guidance_scale=guidance_scale,
     ).frames[0]
     return video
+
+def resize_video(input_path, target_size=(720, 480)):
+    print(f"resize video {input_path}")
+    # Load the video clip
+    clip = mp.VideoFileClip(input_path)
+
+    # Calculate the scaling factor
+    width_ratio = target_size[0] / clip.w
+    height_ratio = target_size[1] / clip.h
+    scale_factor = min(width_ratio, height_ratio)
+
+    print(f"resize {scale_factor}")
+
+    # Resize the clip
+    resized_clip = clip.resize(scale_factor)
+
+    # If the resized clip is smaller than the target size, pad it
+    if resized_clip.w < target_size[0] or resized_clip.h < target_size[1]:
+        resized_clip = resized_clip.on_color(
+            size=target_size,
+            color=(0, 0, 0),  # Black padding
+            pos='center'
+        )
+
+    # Write the result to a file
+    resized_clip.write_videofile(input_path)
+
+    # Close the clips
+    clip.close()
 
 def save_video(tensor):
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
