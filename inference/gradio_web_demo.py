@@ -152,7 +152,7 @@ def infer2(prompt: str, videopath: str, strength: float, num_inference_steps: in
 
 def resize_video(input_path, target_size=(720, 480)):
     print(f"resize video {input_path}")
-    # Load the video clip
+
     clip = mp.VideoFileClip(input_path)
 
     # Remove audio
@@ -163,28 +163,71 @@ def resize_video(input_path, target_size=(720, 480)):
     height_ratio = target_size[1] / clip.h
     scale_factor = min(width_ratio, height_ratio)
 
-    print(f"resize {scale_factor}")
+    print(f"Resize factor: {scale_factor}")
 
-    # Resize the clip
-    resized_clip = clip.resize(scale_factor)
+    # Define a function to resize and pad a single frame
+    def process_frame(frame):
+        # Resize the frame
+        resized_frame = mp.vfx.resize(frame, scale_factor)
+        
+        # Pad the frame if necessary
+        if resized_frame.shape[0] < target_size[1] or resized_frame.shape[1] < target_size[0]:
+            pad_top = (target_size[1] - resized_frame.shape[0]) // 2
+            pad_bottom = target_size[1] - resized_frame.shape[0] - pad_top
+            pad_left = (target_size[0] - resized_frame.shape[1]) // 2
+            pad_right = target_size[0] - resized_frame.shape[1] - pad_left
+            
+            padded_frame = np.pad(resized_frame, ((pad_top, pad_bottom), (pad_left, pad_right), (0, 0)), 
+                                  mode='constant', constant_values=0)
+            return padded_frame
+        return resized_frame
 
-    # If the resized clip is smaller than the target size, pad it
-    if resized_clip.w < target_size[0] or resized_clip.h < target_size[1]:
-        resized_clip = resized_clip.on_color(
-            size=target_size,
-            color=(0, 0, 0),  # Black padding
-            pos='center'
-        )
+    # Apply the processing function to each frame
+    resized_clip = clip.fl(process_frame)
 
-    # Write the result to a file
-    resized_clip.write_videofile(input_path, codec='libx264', audio_codec='aac')
+    try:
+        # Write the result to a file
+        resized_clip.write_videofile(input_path, codec='libx264', audio_codec='aac')
+    finally:
+        # Ensure clips are closed even if an error occurs
+        clip.close()
+        resized_clip.close()
 
-    # Close the clips
-    clip.close()
-    resized_clip.close()
 
-    # Sleep for 2 seconds
-    time.sleep(2)
+
+#    # Load the video clip
+#    clip = mp.VideoFileClip(input_path)
+#
+#    # Remove audio
+#    clip = clip.without_audio()
+#
+#    # Calculate the scaling factor
+#    width_ratio = target_size[0] / clip.w
+#    height_ratio = target_size[1] / clip.h
+#    scale_factor = min(width_ratio, height_ratio)
+#
+#    print(f"resize {scale_factor}")
+#
+#    # Resize the clip
+#    resized_clip = clip.resize(scale_factor)
+#
+#    # If the resized clip is smaller than the target size, pad it
+#    if resized_clip.w < target_size[0] or resized_clip.h < target_size[1]:
+#        resized_clip = resized_clip.on_color(
+#            size=target_size,
+#            color=(0, 0, 0),  # Black padding
+#            pos='center'
+#        )
+#
+#    # Write the result to a file
+#    resized_clip.write_videofile(input_path, codec='libx264', audio_codec='aac')
+#
+#    # Close the clips
+#    clip.close()
+#    resized_clip.close()
+#
+#    # Sleep for 2 seconds
+#    time.sleep(2)
 
 
 def save_video(tensor):
