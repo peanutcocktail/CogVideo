@@ -307,7 +307,7 @@ with gr.Blocks() as demo:
             with gr.Row():
                 with gr.Column():
                     video = gr.Video(label="Driving Video")
-                    strength = gr.Number(value=0.8, minimum=0.01, maximum=0.99)
+                    strength = gr.Number(value=0.8, minimum=0.01, maximum=0.99, label="Strength")
                     prompt2 = gr.Textbox(label="Prompt (Less than 200 Words. The more detailed the better.)", placeholder="Enter your prompt here", lines=5)
 
                     with gr.Row():
