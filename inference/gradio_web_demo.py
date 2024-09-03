@@ -155,6 +155,9 @@ def resize_video(input_path, target_size=(720, 480)):
     # Load the video clip
     clip = mp.VideoFileClip(input_path)
 
+    # Remove audio
+    clip = clip.without_audio()
+
     # Calculate the scaling factor
     width_ratio = target_size[0] / clip.w
     height_ratio = target_size[1] / clip.h
