@@ -139,8 +139,8 @@ def infer2(prompt: str, videopath: str, strength: float, num_inference_steps: in
     global pipe
     torch.cuda.empty_cache()
     init2(name, dtype)
-    resize_video(videopath)
-    input_video = load_video(videopath)
+    resized_videopath = resize_video(videopath)
+    input_video = load_video(resized_videopath)
     video = pipe(
         video=input_video,
         prompt=prompt,
@@ -187,9 +187,7 @@ def resize_video(input_path, target_size=(720, 480)):
     clip.close()
     resized_clip.close()
 
-    # Replace the original file with the temporary file
-    os.replace(temp_output, input_path)
-
+    return temp_output
 
 
 def save_video(tensor):
