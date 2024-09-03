@@ -181,7 +181,7 @@ def resize_video(input_path, target_size=(720, 480)):
     input_dir = os.path.dirname(input_path)
     temp_output = os.path.join(input_dir, "temp_video.mp4")
 
-    resized_clip.write_videofile(temp_output, fps=clip.fps)
+    resized_clip.write_videofile(temp_output, fps=8)
 
     # Close the clips
     clip.close()
